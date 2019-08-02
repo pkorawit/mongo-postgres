@@ -15,7 +15,7 @@ MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
     var dbo = db.db("ptie");
     var query = { "media.taken_at_timestamp": { "$gte": 1543597201, $lt: 1553965201 } };
     var i = 0;
-    dbo.collection("instagrams").find(query).limit(1000).forEach(function (doc) {
+    dbo.collection("instagrams").find(query).forEach(function (doc) {
 
         const shortcode = doc.shortcode;
         const full_name = (doc.media.owner.full_name) ? doc.media.owner.full_name : '';
@@ -44,26 +44,35 @@ MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
             caption_text
             ) 
             VALUES (
-                '${shortcode}',
-                '${full_name}',
-                '${username}',
-                ${location_id},
-                '${location_name}',
-                ${like_count},
-                ${taken_at_timestamp},
-                '${caption_text}'
+                $1,
+                $2,
+                $3,
+                $4,
+                $5,
+                $6,
+                $7,
+                $8
             )
             `;
-        pool.query(query, (error, result) => {
+        const params = [
+            shortcode,
+            full_name,
+            username,
+            location_id,
+            location_name,
+            like_count,
+            taken_at_timestamp,
+            caption_text
+        ]; 
+
+        pool.query(query, params, (error, result) => {
             if (error) {
                 console.log(++i + " " + doc.shortcode + " ERROR " + error);                
             }
             else{
                 console.log(++i + " " + doc.shortcode + " inserted");
             }
-            if(doc.shortcode == 'BsGLquRnpZR'){
-                console.log(query);
-            }
+            doc = null;
         })
 
     }, function (err) {
