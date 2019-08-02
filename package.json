@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "mongodb": "^3.3.0-beta2"
+    "mongodb": "^3.3.0-beta2",
+    "pg": "^7.12.0"
   }
 }
